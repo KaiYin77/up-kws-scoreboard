@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KWS 計分板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .keyword-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .keyword-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .keyword-card.correct {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .keyword-card.wrong {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .keyword {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .stat-value.correct {
+            color: #11998e;
+        }
+
+        .stat-value.wrong {
+            color: #eb3349;
+        }
+
+        .reset-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .instructions {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .instructions strong {
+            color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .scoreboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KWS 計分板</h1>
+        
+        <div class="scoreboard" id="scoreboard"></div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-label">正確 (Correct)</div>
+                <div class="stat-value correct" id="totalCorrect">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">錯誤 (Wrong)</div>
+                <div class="stat-value wrong" id="totalWrong">0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">正確率 (Accuracy)</div>
+                <div class="stat-value" id="totalScore">0%</div>
+            </div>
+        </div>
+
+        <button class="reset-btn" onclick="resetScores()">重置記分板 Reset</button>
+
+        <div class="instructions">
+            <strong>使用說明:</strong> 左鍵點擊 = 正確 (+1) | 右鍵點擊 = 錯誤 (+1)<br>
+        </div>
+    </div>
+
+    <script>
+        const keywords = [
+            ['down', 'stop', 'left', 'no', 'off'],
+            ['up', 'go', 'right', 'yes', 'on']
+        ];
+
+        let scores = {};
+
+        // Initialize scores
+        keywords.flat().forEach(keyword => {
+            scores[keyword] = { correct: 0, wrong: 0 };
+        });
+
+        // Create scoreboard
+        function createScoreboard() {
+            const scoreboard = document.getElementById('scoreboard');
+            scoreboard.innerHTML = '';
+
+            keywords.flat().forEach(keyword => {
+                const card = document.createElement('div');
+                card.className = 'keyword-card';
+                card.innerHTML = `
+                    <div class="keyword">${keyword}</div>
+                    <div class="score">
+                        ✓ ${scores[keyword].correct} | ✗ ${scores[keyword].wrong}
+                    </div>
+                `;
+
+                // Left click for correct
+                card.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    scores[keyword].correct++;
+                    animateCard(card, 'correct');
+                    updateScoreboard();
+                });
+
+                // Right click for wrong
+                card.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    scores[keyword].wrong++;
+                    animateCard(card, 'wrong');
+                    updateScoreboard();
+                });
+
+                scoreboard.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        function animateCard(card, type) {
+            card.classList.add(type);
+            setTimeout(() => {
+                card.classList.remove(type);
+            }, 300);
+        }
+
+        function updateScoreboard() {
+            const cards = document.querySelectorAll('.keyword-card');
+            keywords.flat().forEach((keyword, index) => {
+                cards[index].querySelector('.score').innerHTML = `
+                    ✓ ${scores[keyword].correct} | ✗ ${scores[keyword].wrong}
+                `;
+            });
+            updateStats();
+        }
+
+        function updateStats() {
+            let totalCorrect = 0;
+            let totalWrong = 0;
+
+            Object.values(scores).forEach(score => {
+                totalCorrect += score.correct;
+                totalWrong += score.wrong;
+            });
+
+            const total = totalCorrect + totalWrong;
+            const accuracy = total > 0 ? ((totalCorrect / total) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalCorrect').textContent = totalCorrect;
+            document.getElementById('totalWrong').textContent = totalWrong;
+            document.getElementById('totalScore').textContent = accuracy + '%';
+        }
+
+        function resetScores() {
+            if (confirm('確定要重置所有分數嗎？ Reset all scores?')) {
+                keywords.flat().forEach(keyword => {
+                    scores[keyword] = { correct: 0, wrong: 0 };
+                });
+                updateScoreboard();
+            }
+        }
+
+        // Initialize
+        createScoreboard();
+    </script>
+</body>
+</html>
