@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KWS 計分板</title>
+    <title>KWS Scoreboard</title>
     <style>
         * {
             margin: 0;
@@ -13,19 +14,19 @@
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 12px;
         }
 
         .container {
             background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            /* border-radius: 20px; */
+            padding: 12px;
+            /* box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); */
             max-width: 800px;
             width: 100%;
         }
@@ -45,28 +46,31 @@
         }
 
         .keyword-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px 15px;
-            border-radius: 12px;
+            /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
+            color: black;
+            padding: 10px;
+            /* border-radius: 12px; */
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             position: relative;
             user-select: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid #303841;
+            /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
         }
 
         .keyword-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
         .keyword-card.correct {
+            color: white;
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
         }
 
         .keyword-card.wrong {
+            color: white;
             background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
         }
 
@@ -86,9 +90,9 @@
             display: flex;
             justify-content: space-around;
             margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid #303841;
+            /* border-radius: 12px; */
         }
 
         .stat-item {
@@ -115,50 +119,52 @@
         }
 
         .reset-btn {
+            background: f8f9fa;
             display: block;
             margin: 20px auto 0;
             padding: 12px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
+            /* background: #000080; */
+            /* color: white; */
+            /* border: none; */
+            border: 1px solid #303841;
             font-size: 1em;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); */
         }
 
         .reset-btn:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .instructions {
             text-align: center;
             margin-top: 20px;
-            color: #666;
+            /* color: #666; */
             font-size: 0.9em;
         }
 
         .instructions strong {
-            color: #333;
+            /* color: #333; */
         }
 
         @media (max-width: 768px) {
             .scoreboard {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .container {
                 padding: 20px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>KWS 計分板</h1>
-        
+        <h1>Upbeat KWS</h1>
+
         <div class="scoreboard" id="scoreboard"></div>
 
         <div class="stats">
@@ -280,4 +286,5 @@
         createScoreboard();
     </script>
 </body>
+
 </html>
